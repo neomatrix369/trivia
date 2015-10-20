@@ -4,29 +4,29 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Game {
-    protected static final String THEY_HAVE_ROLLED_A_N = "They have rolled a %d%n";
     private static final String POP_QUESTION = "Pop Question ";
     private static final String SCIENCE_QUESTION = "Science Question ";
     private static final String SPORTS_QUESTION = "Sports Question ";
     private static final String ROCK_QUESTION = "Rock Question ";
-
     private static final String POP = "Pop";
+
     private static final String SCIENCE = "Science";
     private static final String SPORTS = "Sports";
     private static final String ROCK = "Rock";
 
     private static final String ANSWER_WAS_CORRECT = "Answer was correct!!!!";
     private static final String ANSWER_WAS_CORRENT = "Answer was corrent!!!!";
-    private static final String QUESTION_WAS_INCORRECTLY_ANSWERED = "Question was incorrectly answered";
+    private static final String PLAYERS_NEW_LOCATION_IS = "%s's new location is %d%n";
+    private static final String PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is getting out of the penalty box%n";
+    private static final String PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is not getting out of the penalty box%n";
+    private static final String PLAYER_IS_THE_CURRENT_PLAYER = "%s is the current player%n";
     private static final String PLAYER_NOW_HAS_N_GOLD_COINS = "%s now has %d Gold Coins.%n";
+    private static final String PLAYER_WAS_ADDED = "%s was added%n";
     private static final String PLAYER_WAS_SENT_TO_THE_PENALTY_BOX = "%s was sent to the penalty box%n";
-    protected static final String PLAYER_WAS_ADDED = "%s was added%n";
-    protected static final String THEY_ARE_PLAYER_NUMBER = "They are player number %d%n";
-    protected static final String PLAYER_IS_THE_CURRENT_PLAYER = "%s is the current player%n";
-    protected static final String PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is getting out of the penalty box%n";
-    protected static final String THE_CATEGORY_IS = "The category is %s%n";
-    protected static final String PLAYERS_NEW_LOCATION_IS = "%s's new location is %d%n";
-    protected static final String PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is not getting out of the penalty box%n";
+    private static final String QUESTION_WAS_INCORRECTLY_ANSWERED = "Question was incorrectly answered";
+    private static final String THEY_ARE_PLAYER_NUMBER = "They are player number %d%n";
+    private static final String THEY_HAVE_ROLLED_A = "They have rolled a %d%n";
+    private static final String THE_CATEGORY_IS = "The category is %s%n";
 
     ArrayList players = new ArrayList();
     int[] places = new int[6];
@@ -73,7 +73,7 @@ public class Game {
 
     public void roll(int roll) {
         System.out.printf(PLAYER_IS_THE_CURRENT_PLAYER, players.get(currentPlayer));
-        System.out.printf(THEY_HAVE_ROLLED_A_N, roll);
+        System.out.printf(THEY_HAVE_ROLLED_A, roll);
 
         if (inPenaltyBox[currentPlayer]) {
             if (roll % 2 != 0) {
@@ -170,7 +170,6 @@ public class Game {
         if (currentPlayer == players.size()) currentPlayer = 0;
         return true;
     }
-
 
     private boolean didPlayerWin() {
         return !(purses[currentPlayer] == 6);
