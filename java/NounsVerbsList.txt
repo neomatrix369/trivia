@@ -1,0 +1,30 @@
+arraylist
+askquestion
+coins
+currentcategory
+currentplayer
+didplayerwin
+game
+howmanyplayers
+i
+index
+inpenaltybox
+isgettingoutofpenaltybox
+linkedlist
+location
+penalty box
+places
+player number
+playername
+players
+players.add
+players.size
+popquestions 
+popquestions.addlast
+purses
+rock
+rockquestions
+sciencequestions
+sportsquestions
+winner
+wronganswer
