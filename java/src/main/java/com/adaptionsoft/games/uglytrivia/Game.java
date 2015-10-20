@@ -4,17 +4,30 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Game {
-    protected static final String POP_QUESTION = "Pop Question ";
-    protected static final String SCIENCE_QUESTION = "Science Question ";
-    protected static final String SPORTS_QUESTION = "Sports Question ";
-    protected static final String ROCK_QUESTION = "Rock Question ";
-    protected static final String POP = "Pop";
-    protected static final String SCIENCE = "Science";
-    protected static final String SPORTS = "Sports";
-    protected static final String ROCK = "Rock";
-    protected static final String ANSWER_WAS_CORRECT = "Answer was correct!!!!";
-    protected static final String ANSWER_WAS_CORRENT = "Answer was corrent!!!!";
-    protected static final String QUESTION_WAS_INCORRECTLY_ANSWERED = "Question was incorrectly answered";
+    protected static final String THEY_HAVE_ROLLED_A_N = "They have rolled a %d%n";
+    private static final String POP_QUESTION = "Pop Question ";
+    private static final String SCIENCE_QUESTION = "Science Question ";
+    private static final String SPORTS_QUESTION = "Sports Question ";
+    private static final String ROCK_QUESTION = "Rock Question ";
+
+    private static final String POP = "Pop";
+    private static final String SCIENCE = "Science";
+    private static final String SPORTS = "Sports";
+    private static final String ROCK = "Rock";
+
+    private static final String ANSWER_WAS_CORRECT = "Answer was correct!!!!";
+    private static final String ANSWER_WAS_CORRENT = "Answer was corrent!!!!";
+    private static final String QUESTION_WAS_INCORRECTLY_ANSWERED = "Question was incorrectly answered";
+    private static final String PLAYER_NOW_HAS_N_GOLD_COINS = "%s now has %d Gold Coins.%n";
+    private static final String PLAYER_WAS_SENT_TO_THE_PENALTY_BOX = "%s was sent to the penalty box%n";
+    protected static final String PLAYER_WAS_ADDED = "%s was added%n";
+    protected static final String THEY_ARE_PLAYER_NUMBER = "They are player number %d%n";
+    protected static final String PLAYER_IS_THE_CURRENT_PLAYER = "%s is the current player%n";
+    protected static final String PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is getting out of the penalty box%n";
+    protected static final String THE_CATEGORY_IS = "The category is %s%n";
+    protected static final String PLAYERS_NEW_LOCATION_IS = "%s's new location is %d%n";
+    protected static final String PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX = "%s is not getting out of the penalty box%n";
+
     ArrayList players = new ArrayList();
     int[] places = new int[6];
     int[] purses = new int[6];
@@ -49,8 +62,8 @@ public class Game {
         purses[howManyPlayers()] = 0;
         inPenaltyBox[howManyPlayers()] = false;
 
-        System.out.printf("%s was added%n", playerName);
-        System.out.printf("They are player number %d%n", players.size());
+        System.out.printf(PLAYER_WAS_ADDED, playerName);
+        System.out.printf(THEY_ARE_PLAYER_NUMBER, players.size());
         return true;
     }
 
@@ -59,22 +72,22 @@ public class Game {
     }
 
     public void roll(int roll) {
-        System.out.printf("%s is the current player%n", players.get(currentPlayer));
-        System.out.printf("They have rolled a %d%n", roll);
+        System.out.printf(PLAYER_IS_THE_CURRENT_PLAYER, players.get(currentPlayer));
+        System.out.printf(THEY_HAVE_ROLLED_A_N, roll);
 
         if (inPenaltyBox[currentPlayer]) {
             if (roll % 2 != 0) {
                 isGettingOutOfPenaltyBox = true;
 
-                System.out.printf("%s is getting out of the penalty box%n", players.get(currentPlayer));
+                System.out.printf(PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
                 places[currentPlayer] = places[currentPlayer] + roll;
                 if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
 
-                System.out.printf("%s's new location is %d%n", players.get(currentPlayer), places[currentPlayer]);
-                System.out.printf("The category is %s%n", currentCategory());
+                System.out.printf(PLAYERS_NEW_LOCATION_IS, players.get(currentPlayer), places[currentPlayer]);
+                System.out.printf(THE_CATEGORY_IS, currentCategory());
                 askQuestion();
             } else {
-                System.out.printf("%s is not getting out of the penalty box%n", players.get(currentPlayer));
+                System.out.printf(PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
                 isGettingOutOfPenaltyBox = false;
             }
 
@@ -83,8 +96,8 @@ public class Game {
             places[currentPlayer] = places[currentPlayer] + roll;
             if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
 
-            System.out.printf("%s's new location is %d%n", players.get(currentPlayer), places[currentPlayer]);
-            System.out.printf("The category is %s%n", currentCategory());
+            System.out.printf(PLAYERS_NEW_LOCATION_IS, players.get(currentPlayer), places[currentPlayer]);
+            System.out.printf(THE_CATEGORY_IS, currentCategory());
             askQuestion();
         }
 
@@ -120,7 +133,7 @@ public class Game {
             if (isGettingOutOfPenaltyBox) {
                 System.out.println(ANSWER_WAS_CORRECT);
                 purses[currentPlayer]++;
-                System.out.printf("%s now has %d Gold Coins.%n", players.get(currentPlayer), purses[currentPlayer]);
+                System.out.printf(PLAYER_NOW_HAS_N_GOLD_COINS, players.get(currentPlayer), purses[currentPlayer]);
 
                 boolean winner = didPlayerWin();
                 currentPlayer++;
@@ -138,7 +151,7 @@ public class Game {
 
             System.out.println(ANSWER_WAS_CORRENT);
             purses[currentPlayer]++;
-            System.out.printf("%s now has %d Gold Coins.%n", players.get(currentPlayer), purses[currentPlayer]);
+            System.out.printf(PLAYER_NOW_HAS_N_GOLD_COINS, players.get(currentPlayer), purses[currentPlayer]);
 
             boolean winner = didPlayerWin();
             currentPlayer++;
@@ -150,7 +163,7 @@ public class Game {
 
     public boolean wrongAnswer() {
         System.out.println(QUESTION_WAS_INCORRECTLY_ANSWERED);
-        System.out.printf("%s was sent to the penalty box%n", players.get(currentPlayer));
+        System.out.printf(PLAYER_WAS_SENT_TO_THE_PENALTY_BOX, players.get(currentPlayer));
         inPenaltyBox[currentPlayer] = true;
 
         currentPlayer++;
