@@ -6,10 +6,10 @@
 .*
 !.gitignore
 
-!/lib/*.jar
+!lib/ApprovalTests.013/*.jar
 
 # Java
-/target/
+target/
 
 # Package Files #
 *.jar
