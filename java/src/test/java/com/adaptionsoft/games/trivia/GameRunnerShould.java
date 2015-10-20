@@ -20,6 +20,8 @@ public class GameRunnerShould {
 	private PrintStream previousOut;
 
 	private String[] players = new String[]{"Chet", "Pat", "Sue"};
+	private int[] diceRolls = new int[] {1,2,3,4,5,6};
+	private int diceIndex = -1;
 
 	@Test public void
 	should_return_outcome_after_a_number_of_rolls_and_finishing_the_game() throws Exception {
@@ -66,6 +68,10 @@ public class GameRunnerShould {
 	}
 
 	public int getDiceRoll() {
-		return random.nextInt(5) + 1;
+		diceIndex++;
+		if (diceIndex == diceRolls.length) {
+			diceIndex=0;
+		}
+		return diceRolls[diceIndex];
 	}
 }
