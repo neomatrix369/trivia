@@ -55,16 +55,18 @@ public class Game {
     }
 
     public boolean add(String playerName) {
-
-
         players.add(playerName);
+        initialiseLastAddedPlayer();
+
+        showMessageAboutPlayer(PLAYER_WAS_ADDED, playerName);
+        showMessageAboutPlayer(THEY_ARE_PLAYER_NUMBER, players.size());
+        return true;
+    }
+
+    private void initialiseLastAddedPlayer() {
         places[howManyPlayers()] = 0;
         purses[howManyPlayers()] = 0;
         inPenaltyBox[howManyPlayers()] = false;
-
-        System.out.printf(PLAYER_WAS_ADDED, playerName);
-        System.out.printf(THEY_ARE_PLAYER_NUMBER, players.size());
-        return true;
     }
 
     public int howManyPlayers() {
@@ -72,35 +74,76 @@ public class Game {
     }
 
     public void roll(int roll) {
-        System.out.printf(PLAYER_IS_THE_CURRENT_PLAYER, players.get(currentPlayer));
-        System.out.printf(THEY_HAVE_ROLLED_A, roll);
+        showMessageAboutPlayer(PLAYER_IS_THE_CURRENT_PLAYER, players.get(currentPlayer));
+        showMessageAboutPlayer(THEY_HAVE_ROLLED_A, roll);
 
         if (inPenaltyBox[currentPlayer]) {
-            if (roll % 2 != 0) {
-                isGettingOutOfPenaltyBox = true;
+            if (isOddNumber(roll)) {
+                playerIsGettingOutOfThePenaltyBox();
 
-                System.out.printf(PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
-                places[currentPlayer] = places[currentPlayer] + roll;
-                if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
+                showMessageAboutPlayer(PLAYER_IS_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
+                moveCurrentPlayerBy(roll);
 
-                System.out.printf(PLAYERS_NEW_LOCATION_IS, players.get(currentPlayer), places[currentPlayer]);
-                System.out.printf(THE_CATEGORY_IS, currentCategory());
+                showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(PLAYERS_NEW_LOCATION_IS, places[currentPlayer]);
+                showMessageAboutPlayer(THE_CATEGORY_IS, currentCategory());
                 askQuestion();
             } else {
-                System.out.printf(PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
-                isGettingOutOfPenaltyBox = false;
+                showMessageAboutPlayer(PLAYER_IS_NOT_GETTING_OUT_OF_THE_PENALTY_BOX, players.get(currentPlayer));
+                playerIsNotGettingOutOfThePenaltyBox();
             }
-
         } else {
+            moveCurrentPlayerBy(roll);
 
-            places[currentPlayer] = places[currentPlayer] + roll;
-            if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
-
-            System.out.printf(PLAYERS_NEW_LOCATION_IS, players.get(currentPlayer), places[currentPlayer]);
-            System.out.printf(THE_CATEGORY_IS, currentCategory());
+            showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(PLAYERS_NEW_LOCATION_IS, places[currentPlayer]);
+            showMessageAboutPlayer(THE_CATEGORY_IS, currentCategory());
             askQuestion();
         }
 
+    }
+
+    public boolean wasCorrectlyAnswered() {
+        if (inPenaltyBox[currentPlayer]) {
+            if (isGettingOutOfPenaltyBox) {
+                System.out.println(ANSWER_WAS_CORRECT);
+                return ifPlayerHasWon();
+            } else {
+                giveNextPlayerTurn();
+                return true;
+            }
+        } else {
+            System.out.println(ANSWER_WAS_CORRENT);
+            return ifPlayerHasWon();
+        }
+    }
+
+    public boolean wrongAnswer() {
+        System.out.println(QUESTION_WAS_INCORRECTLY_ANSWERED);
+        showMessageAboutPlayer(PLAYER_WAS_SENT_TO_THE_PENALTY_BOX, players.get(currentPlayer));
+        inPenaltyBox[currentPlayer] = true;
+
+        giveNextPlayerTurn();
+        return true;
+    }
+
+    private boolean isOddNumber(int roll) {
+        return roll % 2 != 0;
+    }
+
+    private void showMessageAboutPlayer(String playerIsGettingOutOfThePenaltyBox, Object o) {
+        System.out.printf(playerIsGettingOutOfThePenaltyBox, o);
+    }
+
+    private void playerIsNotGettingOutOfThePenaltyBox() {
+        isGettingOutOfPenaltyBox = false;
+    }
+
+    private void playerIsGettingOutOfThePenaltyBox() {
+        isGettingOutOfPenaltyBox = true;
+    }
+
+    private void moveCurrentPlayerBy(int roll) {
+        places[currentPlayer] = places[currentPlayer] + roll;
+        if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
     }
 
     private void askQuestion() {
@@ -113,7 +156,6 @@ public class Game {
         if (currentCategory() == ROCK)
             System.out.println(rockQuestions.removeFirst());
     }
-
 
     private String currentCategory() {
         if (places[currentPlayer] == 0) return POP;
@@ -128,47 +170,27 @@ public class Game {
         return ROCK;
     }
 
-    public boolean wasCorrectlyAnswered() {
-        if (inPenaltyBox[currentPlayer]) {
-            if (isGettingOutOfPenaltyBox) {
-                System.out.println(ANSWER_WAS_CORRECT);
-                purses[currentPlayer]++;
-                System.out.printf(PLAYER_NOW_HAS_N_GOLD_COINS, players.get(currentPlayer), purses[currentPlayer]);
+    private boolean ifPlayerHasWon() {
+        increasePurseValueForCurrentPlayer();
+        showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(PLAYER_NOW_HAS_N_GOLD_COINS, purses[currentPlayer]);
 
-                boolean winner = didPlayerWin();
-                currentPlayer++;
-                if (currentPlayer == players.size()) currentPlayer = 0;
+        boolean winner = didPlayerWin();
+        giveNextPlayerTurn();
 
-                return winner;
-            } else {
-                currentPlayer++;
-                if (currentPlayer == players.size()) currentPlayer = 0;
-                return true;
-            }
-
-
-        } else {
-
-            System.out.println(ANSWER_WAS_CORRENT);
-            purses[currentPlayer]++;
-            System.out.printf(PLAYER_NOW_HAS_N_GOLD_COINS, players.get(currentPlayer), purses[currentPlayer]);
-
-            boolean winner = didPlayerWin();
-            currentPlayer++;
-            if (currentPlayer == players.size()) currentPlayer = 0;
-
-            return winner;
-        }
+        return winner;
     }
 
-    public boolean wrongAnswer() {
-        System.out.println(QUESTION_WAS_INCORRECTLY_ANSWERED);
-        System.out.printf(PLAYER_WAS_SENT_TO_THE_PENALTY_BOX, players.get(currentPlayer));
-        inPenaltyBox[currentPlayer] = true;
+    private void showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(String playerNowHasNGoldCoins, int purse) {
+        System.out.printf(playerNowHasNGoldCoins, players.get(currentPlayer), purse);
+    }
 
+    private void increasePurseValueForCurrentPlayer() {
+        purses[currentPlayer]++;
+    }
+
+    private void giveNextPlayerTurn() {
         currentPlayer++;
         if (currentPlayer == players.size()) currentPlayer = 0;
-        return true;
     }
 
     private boolean didPlayerWin() {
