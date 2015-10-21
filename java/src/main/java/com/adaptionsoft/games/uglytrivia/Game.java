@@ -28,17 +28,20 @@ public class Game {
     private static final String THEY_HAVE_ROLLED_A = "They have rolled a %d%n";
     private static final String THE_CATEGORY_IS = "The category is %s%n";
 
+    private static final int MAXIMUM_PLAYERS = 6;
+    private static final int FIRST_PLAYER = 0;
+
     ArrayList players = new ArrayList();
-    int[] places = new int[6];
-    int[] purses = new int[6];
-    boolean[] inPenaltyBox = new boolean[6];
+    int[] places = new int[MAXIMUM_PLAYERS];
+    int[] purses = new int[MAXIMUM_PLAYERS];
+    boolean[] inPenaltyBox = new boolean[MAXIMUM_PLAYERS];
 
     LinkedList popQuestions = new LinkedList();
     LinkedList scienceQuestions = new LinkedList();
     LinkedList sportsQuestions = new LinkedList();
     LinkedList rockQuestions = new LinkedList();
 
-    int currentPlayer = 0;
+    int currentPlayer = FIRST_PLAYER;
     boolean isGettingOutOfPenaltyBox;
 
     public Game() {
@@ -64,9 +67,21 @@ public class Game {
     }
 
     private void initialiseLastAddedPlayer() {
-        places[howManyPlayers()] = 0;
-        purses[howManyPlayers()] = 0;
+        initialisePlaceForLastAddedPlayer();
+        initialisePurseForLastAddedPlayer();
+        initialisePenaltyBoxForLastAddedPlayer();
+    }
+
+    private void initialisePenaltyBoxForLastAddedPlayer() {
         inPenaltyBox[howManyPlayers()] = false;
+    }
+
+    private void initialisePurseForLastAddedPlayer() {
+        purses[howManyPlayers()] = 0;
+    }
+
+    private void initialisePlaceForLastAddedPlayer() {
+        places[howManyPlayers()] = 0;
     }
 
     public int howManyPlayers() {
@@ -98,28 +113,27 @@ public class Game {
             showMessageAboutPlayer(THE_CATEGORY_IS, currentCategory());
             askQuestion();
         }
-
     }
 
     public boolean wasCorrectlyAnswered() {
         if (inPenaltyBox[currentPlayer]) {
             if (isGettingOutOfPenaltyBox) {
-                System.out.println(ANSWER_WAS_CORRECT);
+                showMessageAboutAnswerPolarity(ANSWER_WAS_CORRECT);
                 return ifPlayerHasWon();
             } else {
                 giveNextPlayerTurn();
                 return true;
             }
         } else {
-            System.out.println(ANSWER_WAS_CORRENT);
+            showMessageAboutAnswerPolarity(ANSWER_WAS_CORRENT);
             return ifPlayerHasWon();
         }
     }
 
     public boolean wrongAnswer() {
-        System.out.println(QUESTION_WAS_INCORRECTLY_ANSWERED);
+        showMessageAboutAnswerPolarity(QUESTION_WAS_INCORRECTLY_ANSWERED);
         showMessageAboutPlayer(PLAYER_WAS_SENT_TO_THE_PENALTY_BOX, players.get(currentPlayer));
-        inPenaltyBox[currentPlayer] = true;
+        putCurrentPlayerInPenaltyBox();
 
         giveNextPlayerTurn();
         return true;
@@ -129,8 +143,8 @@ public class Game {
         return roll % 2 != 0;
     }
 
-    private void showMessageAboutPlayer(String playerIsGettingOutOfThePenaltyBox, Object o) {
-        System.out.printf(playerIsGettingOutOfThePenaltyBox, o);
+    private void putCurrentPlayerInPenaltyBox() {
+        inPenaltyBox[currentPlayer] = true;
     }
 
     private void playerIsNotGettingOutOfThePenaltyBox() {
@@ -139,6 +153,11 @@ public class Game {
 
     private void playerIsGettingOutOfThePenaltyBox() {
         isGettingOutOfPenaltyBox = true;
+    }
+
+    private void giveNextPlayerTurn() {
+        currentPlayer++;
+        if (currentPlayer == players.size()) currentPlayer = FIRST_PLAYER;
     }
 
     private void moveCurrentPlayerBy(int roll) {
@@ -165,9 +184,21 @@ public class Game {
         if (places[currentPlayer] == 5) return SCIENCE;
         if (places[currentPlayer] == 9) return SCIENCE;
         if (places[currentPlayer] == 2) return SPORTS;
-        if (places[currentPlayer] == 6) return SPORTS;
+        if (places[currentPlayer] == MAXIMUM_PLAYERS) return SPORTS;
         if (places[currentPlayer] == 10) return SPORTS;
         return ROCK;
+    }
+
+    private void showMessageAboutAnswerPolarity(String questionWasIncorrectlyAnswered) {
+        System.out.println(questionWasIncorrectlyAnswered);
+    }
+
+    private void showMessageAboutPlayer(String message, Object value) {
+        System.out.printf(message, value);
+    }
+
+    private void showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(String playerNowHasNGoldCoins, int purse) {
+        System.out.printf(playerNowHasNGoldCoins, players.get(currentPlayer), purse);
     }
 
     private boolean ifPlayerHasWon() {
@@ -180,20 +211,11 @@ public class Game {
         return winner;
     }
 
-    private void showMessageAboutTotalGoldCoinsOwnedByCurrentPlayer(String playerNowHasNGoldCoins, int purse) {
-        System.out.printf(playerNowHasNGoldCoins, players.get(currentPlayer), purse);
-    }
-
     private void increasePurseValueForCurrentPlayer() {
         purses[currentPlayer]++;
     }
 
-    private void giveNextPlayerTurn() {
-        currentPlayer++;
-        if (currentPlayer == players.size()) currentPlayer = 0;
-    }
-
     private boolean didPlayerWin() {
-        return !(purses[currentPlayer] == 6);
+        return !(purses[currentPlayer] == MAXIMUM_PLAYERS);
     }
 }
