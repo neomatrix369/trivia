@@ -1,6 +1,7 @@
 package com.adaptionsoft.games.trivia;
 
 import com.adaptionsoft.games.uglytrivia.Game;
+import com.adaptionsoft.games.uglytrivia.Player;
 import org.approvaltests.Approvals;
 import org.approvaltests.reporters.QuietReporter;
 import org.approvaltests.reporters.UseReporter;
@@ -19,7 +20,11 @@ public class GameRunnerShould {
 	private Game game;
 	private PrintStream previousOut;
 
-	private String[] players = new String[]{"Chet", "Pat", "Sue"};
+	private Player[] players = new Player[]{
+			new Player("Chet"),
+			new Player("Pat"),
+			new Player("Sue")
+	};
 	private int[] diceRolls = new int[] {1,2,3,4,5,6};
 	private int diceIndex = -1;
 
@@ -47,7 +52,7 @@ public class GameRunnerShould {
 
 	public void runGame() {
 		game = new Game();
-		for (String player : players) {
+		for (Player player : players) {
 			game.add(player);
 		}
 
